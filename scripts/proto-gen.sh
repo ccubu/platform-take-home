@@ -1,6 +1,6 @@
 echo "Generating proto code"
 
-# Validar existencia de comandos necesarios
+
 function check_command() {
   if ! command -v "$1" &>/dev/null; then
     echo "Error: '$1' not installed. Please install it and try again."
@@ -8,7 +8,7 @@ function check_command() {
   fi
 }
 
-# Verificar herramientas necesarias
+# Check for needed tools
 check_command buf
 check_command protoc
 check_command protoc-gen-go
