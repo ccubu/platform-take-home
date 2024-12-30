@@ -1,0 +1,6 @@
+namespace: default
+postgresPassword: password # This should be stored somewhere safer, but didn't want to overcomplicate
+postgresDb: takehome
+postgresUser: takehome
+postgresPort: 5432
+postgresDbHost: postgresql

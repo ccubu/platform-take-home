@@ -1,0 +1,13 @@
+releases:
+  - name:  takehome-api-release
+    namespace: '{{ .Values.namespace }}'
+    createNamespace: false
+    chart: .
+    values:
+      - imageTag: {{ .Values.imageTag }}
+      - postgresDb: {{ .Values.postgresDb }}
+      - postgresPort: {{ .Values.postgresPort }}
+      - postgresDbHost: {{ .Values.postgresDbHost }}
+      - postgresPassword: {{ .Values.postgresPassword }}
+      - postgresUser: {{ .Values.postgresUser }}
+      - namespace: {{ .Values.namespace }}
