@@ -96,6 +96,8 @@ To access the ephemeral application deployed by the pull request workflow:
 2. **Set Up kubeconfig**:
    - Set up the `kubeconfig` inside the **devcontainer** to avoid modifying your local environment.
 
+   You can use docker copy to move the downloaded config inside the devcontainer: `docker cp /path/to/kubeconfig my-devcontainer:/root/.kube/config`
+
 
 3. **Retrieve the Service External IP**:
    - Run the following command to get the external IP address of the service:
