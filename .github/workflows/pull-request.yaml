@@ -22,8 +22,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_REGISTRY }}/rest-api:${{ github.sha }} .
-          docker push ${{ secrets.DOCKER_REGISTRY }}/rest-api:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_REGISTRY }}/takehome-api:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_REGISTRY }}/takehome-api:${{ github.sha }}
 
       - name: Check DRY_RUN Flag
         id: check-dry-run
