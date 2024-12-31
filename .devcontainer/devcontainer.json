@@ -12,8 +12,9 @@
       "ms-azuretools.vscode-docker"
     ],
     "mounts": [
-      "source=${localWorkspaceFolder},target=/workspace,type=bind"
+      "source=${localWorkspaceFolder},target=/workspace,type=bind",
+		  "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
     ],
-    "postCreateCommand": "lefthook install && go mod tidy"
+    "postCreateCommand": "ssh-add ~/.ssh/id_rsa && lefthook install && go mod tidy"
 
   }
