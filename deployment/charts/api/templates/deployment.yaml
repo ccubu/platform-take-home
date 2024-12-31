@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: takehome-api
+  labels:
+    app.kubernetes.io/app: takehome-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: takehome-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/app: takehome-api
+    spec:
+      containers:
+        - name: takehome-api
+          image: christiancb/takehome-api:{{ .Values.imageTag }}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '125m'
+            limits:
+              memory: '512Mi'
+              cpu: '1'
+          env:
+            - name: POSTGRES_DSN
+              value:  postgresql://{{ .Values.postgresUser }}:{{ .Values.postgresPassword }}@{{ .Values.postgresDbHost }}:{{ .Values.postgresPort }}/{{ .Values.postgresDb }}
+            - name: DEV_LOGGING
+              value: {{ .Values.devLogging }}
+          command: ["platform/takehomeserver"]
+          ports:
+            - containerPort: 8080  
+            - containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1

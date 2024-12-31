@@ -1,0 +1,54 @@
+name: pull-request-destroy
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  pr-destroy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout
+        with:
+          persist-credentials: false
+
+      - name: Check DRY_RUN Flag
+        id: check-dry-run
+        run: |
+          if [ "${{ vars.DRY_RUN }}" = "true" ]; then
+            echo "DRY_RUN is enabled. Skipping GKE configuration and deployment steps."
+            echo "dry_run=true" >> $GITHUB_ENV
+          else
+            echo "DRY_RUN is disabled. Proceeding with GKE configuration and deployment."
+            echo "dry_run=false" >> $GITHUB_ENV
+          fi
+  
+      - name: Authenticate with GCP
+        if: env.dry_run == 'false'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
+
+      - name: Configure GKE Credentials
+        if: env.dry_run == 'false'
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ secrets.GKE_CLUSTER_NAME }}
+          location: europe-west1
+
+      - name: install kubectl
+        run: |
+          sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl";
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          sudo rm -rf kubectl
+          
+          kubectl get pods
+
+      - name: install vcluster
+        run: |
+          curl -L -o vcluster "https://github.com/loft-sh/vcluster/releases/latest/download/vcluster-linux-amd64" && sudo install -c -m 0755 vcluster /usr/local/bin && sudo rm -f vcluster
+      - name: delete vcluster for PR env
+        run: |
+          vcluster delete pr-${{ github.event.pull_request.number }} &
+          sleep 20

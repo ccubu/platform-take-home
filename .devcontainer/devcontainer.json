@@ -1,0 +1,20 @@
+{
+    "name": "Go Dev Environment",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "settings": {
+      "terminal.integrated.defaultProfile.linux": "bash",
+      "go.gopath": "/go"
+    },
+    "extensions": [
+      "golang.go",
+      "ms-azuretools.vscode-docker"
+    ],
+    "mounts": [
+      "source=${localWorkspaceFolder},target=/workspace,type=bind",
+		  "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+    ],
+    "postCreateCommand": "ssh-add ~/.ssh/id_rsa && lefthook install && go mod tidy"
+
+  }

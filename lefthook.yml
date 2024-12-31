@@ -1,0 +1,10 @@
+pre-commit:
+  fail-fast: true
+  commands:
+    golangci-lint:
+      run: golangci-lint run ./...
+    proto-gen:
+      run: bash scripts/proto-gen.sh
+    stage-changes:
+      run: git add api/
+    

@@ -1,0 +1,48 @@
+repositories:
+  - name: stable
+    url: https://charts.helm.sh/stable
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+environments:
+  default:
+    values:
+      - ./environments/dev/values.yaml
+  development:
+    values:
+      - ./environments/dev/values.yaml
+  production:
+    values:
+      - ./environments/pro/values.yaml
+
+releases:
+  - name: postgresql
+    namespace: {{ .Values.namespace }}
+    chart: bitnami/postgresql
+    version: 11.9.13
+    installed: true
+    values:
+      - global:
+          postgresql:
+            auth:
+              postgresPassword: {{ .Values.postgresPassword }}
+              database:  {{ .Values.postgresDb }}
+              username: {{ .Values.postgresUser }}
+              password: {{ .Values.postgresPassword }}
+      - primary:
+          extraEnvVars:
+            - name: POSTGRESQL_MAX_CONNECTIONS
+              value: "3000"
+          persistence:
+            size: 5Gi
+
+helmfiles:
+  - path: 'charts/api/helmfile.yaml'
+    values:
+      - namespace: {{ .Values.namespace }}
+      - imageTag: {{ requiredEnv "IMAGE_TAG" }}
+      - postgresDb: {{ .Values.postgresDb }}
+      - postgresDbHost: postgresql
+      - postgresPort: {{ .Values.postgresPort }}
+      - postgresPassword: {{ .Values.postgresPassword }}
+      - postgresUser: {{ .Values.postgresUser }}
